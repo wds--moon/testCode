@@ -4,15 +4,36 @@ import com.moon.suanfa.二叉树.printer.BinaryTrees;
 
 public class TestTree {
     public static void main(String[] args) {
+        //setSBT();
+        setAVL();
 
-        SearchTree<Integer> tree = new SearchTree();
-        int[] val = new int[]{10, 5, 6, 2, 3, 9, 8, 15, 1};
+    }
+
+    private static void setAVL() {
+        AVLTree<Integer> tree = new AVLTree();
+        int[] val = new int[]{13,14,15,12,11,17,16,8,9,1};
         for (int i = 0; i < val.length; i++) {
             tree.add(val[i]);
         }
         BinaryTrees.print(tree);
         System.out.println("\n");
-        tree.remove(2);
+        tree.remove(16);
         BinaryTrees.print(tree);
+        System.out.println("\n");
+        tree.remove(17);
+        BinaryTrees.print(tree);
+
+    }
+
+    private static void setSBT() {
+        SearchBinaryTree<Integer> tree = new SearchBinaryTree();
+        int[] val = new int[]{13,14,15,12,11,17,16,8,9,1};
+        for (int i = 0; i < val.length; i++) {
+            tree.add(val[i]);
+        }
+        BinaryTrees.print(tree);
+        System.out.println("\n");
+//        tree.remove(5);
+//        BinaryTrees.print(tree);
     }
 }
