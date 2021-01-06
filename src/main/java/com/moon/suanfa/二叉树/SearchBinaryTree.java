@@ -77,11 +77,11 @@ public class SearchBinaryTree<E> extends BinaryTree<E> {
     /**
      * 构造一个模板方法,用于子类实现处理逻辑
      */
-    public void afterAddNode(Node<E> node){
+    public void afterAddNode(Node<E> node) {
 
     }
 
-    public void afterRemoveNode(Node<E> node){
+    public void afterRemoveNode(Node<E> node) {
 
     }
 
@@ -132,11 +132,11 @@ public class SearchBinaryTree<E> extends BinaryTree<E> {
             } else {
                 parent.right = childNode;
             }
-
+            afterRemoveNode(childNode);
         } else if (node.parent == null) {
             //如果删除的是根节点,并且也是叶子节点
             root = null;
-
+            afterRemoveNode(node);
         } else {
             /**
              * 如果是删除的叶子节点
@@ -146,9 +146,10 @@ public class SearchBinaryTree<E> extends BinaryTree<E> {
             } else {
                 node.parent.right = null;
             }
+            afterRemoveNode(node);
         }
         size--;
-        afterRemoveNode(node);
+
 
     }
 

@@ -9,7 +9,7 @@ import java.util.Comparator;
  *
  * @param <E>
  */
-public class AVLTree<E> extends SearchBinaryTree<E> {
+public class AVLTree<E> extends SuperAVLTree<E> {
 
     public AVLTree() {
         this(null);
@@ -67,6 +67,7 @@ public class AVLTree<E> extends SearchBinaryTree<E> {
             }
             return isLeftChild() ? left : right;
         }
+
         @Override
         public String toString() {
             String parentString = "null";
@@ -126,126 +127,30 @@ public class AVLTree<E> extends SearchBinaryTree<E> {
 
     @Override
     public void afterRemoveNode(Node<E> node) {
-/**
- * 不断向上查找父级节点
- */
+        /**
+         * 不断向上查找父级节点
+         */
         while ((node = node.parent) != null) {
             if (isBalance(node)) {
                 //如果是平衡的我们需要更新节点的高度,下一次循环就可以直接使用,这里有个点,如果没有发生失衡,他会一直寻找到根节点,并且更新他的高度
-                // .相对来说这里的时间复杂度比较低O(h),相对来说这个代价也可以接受.
+                // .相对来说这里的时间复杂度比较低O(h),这个代价也可以接受.
                 updateHeight(node);
             } else {
-                //需要进行平衡操作,结束之后继续循环,因为删除会导致级联失衡,所以需要全部重新平衡
+                //需要进行平衡操作,结束之后继续循环,因为删除会导致级联失衡,所以需要全部重新平衡,所以后续引出红黑树了,来改变这一个性质,从而提高效率
                 rebalance(node);
             }
         }
     }
 
-    /**
-     * 进行平衡,那么这个node是最先失去平衡的节点,这个时候就需要判断是RR,ll,RL,LR
-     *
-     * @param grand
-     */
-    private void rebalance(Node<E> grand) {
-        /**
-         * tallerChild 找到高度最大的子节点
-         */
-        Node<E> parent = ((AVLNode<E>) grand).tallerChild();
-        Node<E> node = ((AVLNode<E>) parent).tallerChild();
-        /**
-         * 失衡树在失衡节点的左边
-         */
-        if (parent.isLeftChild()) {
-            if (node.isLeftChild()) {
-                //LL 右旋  是失衡节点右旋
-                rightRotate(grand);
-
-            } else {
-                //LR
-                leftRotate(parent);
-                rightRotate(grand);
-            }
-
-        } else {
-            if (node.isLeftChild()) {
-                //RL
-                rightRotate(parent);
-                leftRotate(grand);
-            } else {
-                //RR
-                leftRotate(grand);
-            }
-        }
-    }
-
-    /**
-     * 左旋
-     *
-     * @param grand
-     */
-    private void leftRotate(Node<E> grand) {
-        Node<E> parent = grand.right;
-        Node<E> child = parent.left;
-        grand.right = child;
-        /**
-         * 处理parent
-         */
-        parent.left = grand;
-
-        /**
-         * 处理grand
-         */
-        afterRotate(grand, parent, child);
-
-    }
-
-    /**
-     * 右旋
-     *
-     * @param grand
-     */
-    private void rightRotate(Node<E> grand) {
-        Node<E> parent = grand.left;
-        //找到左节点的右节点
-        Node<E> child = parent.right;
-        grand.left = child;
-        /**
-         * 处理parent
-         */
-        parent.right = grand;
-        afterRotate(grand, parent, child);
-
-
-    }
-
-    private void afterRotate(Node<E> grand, Node<E> parent, Node<E> child) {
-        parent.parent = grand.parent;
-        /**
-         * 如果grand是他父级节点的左右节点,否则grand根节点
-         * 处理grand节点
-         */
-        if (grand.isLeftChild()) {
-            grand.parent.left = parent;
-        } else if (grand.isRightChild()) {
-            grand.parent.right = parent;
-        } else {
-            root = parent;
-        }
-        /**
-         * 处理子节点
-         */
-        if (child != null) {
-            child.parent = grand;
-        }
-
-        grand.parent = parent;
+    @Override
+    protected void afterRotate(Node<E> grand, Node<E> parent, Node<E> child) {
+        super.afterRotate(grand, parent, child);
         /**
          * 更新节点的高度
          */
         updateHeight(grand);
         updateHeight(parent);
     }
-
 
     private void updateHeight(Node<E> node) {
         ((AVLNode<E>) node).updateHeight();
